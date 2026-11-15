@@ -62,13 +62,14 @@ export function KitsScreen({ data }: { data: KitsResult }) {
           <ul style={{ margin: 0 }}>
             {data.comparisons.map((c) => (
               <li key={`${c.a}-${c.b}`}>
-                {nameOf(c.a)} and {nameOf(c.b)} share {c.totalCm.toLocaleString()} cM in {c.segments} segments (longest {c.longestCm} cM).
+                {nameOf(c.a)} and {nameOf(c.b)} share {c.totalCm.toLocaleString()} cM in {c.segments} segments (longest {c.longestCm} cM).{' '}
+                {c.fits.length > 0 ? `That fits: ${c.fits.join('; ')}.` : 'That’s outside every close relationship with a published range.'}
               </li>
             ))}
           </ul>
           <p className="ol-hint" style={{ marginTop: 8 }}>
             From their raw DNA, using an approximate map of 1 cM per million base pairs ({data.comparisons[0]!.map}). That’s good enough to see close
-            relatives, not to measure small segments exactly.
+            relatives, not to measure small segments exactly. The relationships listed are every one whose observed range in the Shared cM Project (version 4) holds that number, from DNA alone. Phasing and rebuilding stop if the DNA doesn’t fit the relationship they rely on.
           </p>
         </section>
       )}

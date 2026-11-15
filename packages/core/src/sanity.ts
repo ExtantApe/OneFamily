@@ -7,9 +7,13 @@
  *   with its tested father on the paternal side. A real disagreement rate means a side label, a kit or a
  *   stated relationship is wrong.
  *
+ * - Raw kits: analyses that rest on a stated relationship between two raw kits (phasing with a parent,
+ *   rebuilding from children) measure it first with `requireRawRelationship` and stop if it doesn't fit.
+ *
  * Nothing is repaired. Each problem is an Issue; `assertSane` stops a run on any error. A relationship with no
  * known range is reported as not checked, never passed.
  */
+import { compareKits, type CompareOptions, type KitCalls } from './compare.js'
 import type { MatchObservation } from './model.js'
 import type { Issue } from './issues.js'
 
@@ -27,6 +31,21 @@ export const RELATIONSHIP_RANGES = {
   'first-cousin-once-removed': [102, 980],
   'second-cousin': [41, 592],
 } as const satisfies Record<string, readonly [number, number]>
+
+/** Plain words for each relationship, for screens and reports. */
+export const RELATIONSHIP_WORDS: Record<keyof typeof RELATIONSHIP_RANGES, string> = {
+  'parent-child': 'parent or child',
+  'full-sibling': 'full sibling',
+  'half-sibling': 'half sibling',
+  grandparent: 'grandparent or grandchild',
+  'aunt-uncle': 'aunt, uncle, niece or nephew',
+  'half-aunt-uncle': 'half aunt, uncle, niece or nephew',
+  'great-grandparent': 'great-grandparent or great-grandchild',
+  'first-cousin': 'first cousin',
+  'half-first-cousin': 'half first cousin',
+  'first-cousin-once-removed': 'first cousin once removed',
+  'second-cousin': 'second cousin',
+}
 
 export type Relationship = keyof typeof RELATIONSHIP_RANGES | (string & {})
 
@@ -113,4 +132,29 @@ export function checkSides(child: readonly MatchObservation[], parent: readonly 
 /** Stops a run if any check found an error. */
 export function assertSane(issues: readonly Issue[]): void {
   if (issues.some((i) => i.severity === 'error')) throw new SanityStop(issues)
+}
+
+/** Every published relationship whose observed range includes this cM. Several usually fit. */
+export function fittingRelationships(cm: number): (keyof typeof RELATIONSHIP_RANGES)[] {
+  return (Object.entries(RELATIONSHIP_RANGES) as [keyof typeof RELATIONSHIP_RANGES, readonly [number, number]][])
+    .filter(([, [lo, hi]]) => cm >= lo && cm <= hi)
+    .map(([r]) => r)
+}
+
+export type RawKit = { label: string; calls: KitCalls }
+
+/** Measures two raw kits against each other and checks the stated relationship (S7). */
+export function checkRawPair(a: RawKit, b: RawKit, stated: Relationship, opts: CompareOptions = {}): { cm: number; issues: Issue[] } {
+  const cm = Math.round(compareKits(a.calls, b.calls, opts).totalCm)
+  return { cm, issues: checkKitPairs([{ a: a.label, b: b.label, stated, aSeesB: cm }]) }
+}
+
+/**
+ * Stops unless the two raw kits share cM that fits the stated relationship. A relationship with no published
+ * range can't be checked, so it's refused too: an analysis that rests on it can't go ahead unchecked.
+ */
+export function requireRawRelationship(a: RawKit, b: RawKit, stated: keyof typeof RELATIONSHIP_RANGES, opts: CompareOptions = {}): number {
+  const { cm, issues } = checkRawPair(a, b, stated, opts)
+  assertSane(issues.map((i) => (i.code === 'kits.unchecked' ? { ...i, severity: 'error' as const } : i)))
+  return cm
 }

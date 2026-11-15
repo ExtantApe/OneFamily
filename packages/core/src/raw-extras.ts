@@ -7,9 +7,12 @@
  *   do it, on real data too, once they've chosen to and that choice is recorded in their decisions log. The
  *   result is always labelled "rebuilt, partial", stays in their own library, and is never uploaded or shared
  *   by the app. Without a recorded choice it's refused.
+ * - Both stop with `SanityStop` (S7, ADR 0003) unless the DNA fits the relationships they rest on: the
+ *   parent and child share parent-child cM, and the children share full-sibling cM.
  * - `xPathPossible`: whether X DNA can pass along a line, which rules branches in or out for X matches.
  */
 import type { KitCalls } from './compare.js'
+import { requireRawRelationship } from './sanity.js'
 
 type Calls = { rsid: string[]; position: number[]; call: string[] }
 export type HalfKit = Map<string, Calls>
@@ -22,6 +25,7 @@ const alleles = (g: string): [string, string] | null => (g.length === 2 && g !==
  * parent and child that contradict each other (a likely error).
  */
 export function phaseWithParent(childKit: KitCalls, parentKit: KitCalls): { fromParent: HalfKit; fromOther: HalfKit; resolved: number; total: number } {
+  requireRawRelationship({ label: 'the child', calls: childKit }, { label: 'the tested parent', calls: parentKit }, 'parent-child')
   const fromParent: HalfKit = new Map()
   const fromOther: HalfKit = new Map()
   let resolved = 0
@@ -76,6 +80,9 @@ export const REBUILT_LABEL = 'rebuilt, partial' as const
 export function rebuildFromDescendants(children: readonly KitCalls[], partner: KitCalls, consent: RebuildConsent): { label: typeof REBUILT_LABEL; rebuilt: Map<string, Calls>; halves: HalfKit[]; known: number; halfKnown: number; total: number } {
   if (!('synthetic' in consent) && consent.decision?.kind !== 'rebuild-consent') throw new RebuildRefused()
   if (children.length < 2) throw new Error('rebuilding needs at least two children')
+  for (let i = 0; i < children.length; i++)
+    for (let j = i + 1; j < children.length; j++)
+      requireRawRelationship({ label: `child ${i + 1}`, calls: children[i]! }, { label: `child ${j + 1}`, calls: children[j]! }, 'full-sibling')
   const seen = new Map<string, { pos: number; chr: string; got: Set<string> }>()
   const halves: HalfKit[] = []
   for (const ch of children) {
