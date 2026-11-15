@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Stability report (S8), 2026-11-15 (K408). `compareRuns` compares two grouping runs of one kit, matching branch labels by overlap so a renumbering isn't counted, and `assertStable` stops when more than 5% of the people placed in both runs change line (side and branch). Deeper levels, groups, newly placed and no longer placed are reported. Tested on made-up runs and a planted family; on real data it rated the original method's run against OneFamily's as stable (1.9%). The app doesn't call it yet, since it keeps one run per kit.
+
 - Genetic map download, 2026-11-15 (K653, owner's N124 A). A Genetic map card on the Kits screen offers the HapMap-derived GRCh37 map (about 24 MB) from the Beagle site at the University of Washington. It says where the map comes from and that no license is stated, downloads only after a yes, checks the pinned size and SHA-256, and can remove the map again. Comparisons use it when both raw files are on GRCh37; the demo always uses the approximate rule. Tested with made-up archives, and once by hand with the real archive (chromosome 1 comes out at 286 cM). The card hasn't been clicked in the built app.
 
 - The cross-kit check (S7) is enforced, 2026-11-15 (K655). Phasing a kit with a parent now stops unless the two share parent-child cM, and rebuilding someone also needs the children to share full-sibling cM. `fittingRelationships` and `RELATIONSHIP_WORDS` say which relationships a cM fits, and the Kits screen lists them for each pair compared on the Mac. Tested on simulated kits; the screen text hasn't been seen in the built app.

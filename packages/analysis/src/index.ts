@@ -6,3 +6,4 @@ export { nestedSplit, twoWaySplit, type NestedSplit, type SplitOptions, type Spl
 export { propagateFromSeeds, UNPLACED, type Placement, type PropagateOptions } from './propagate.js'
 export { adjustedRandIndex } from './ari.js'
 export { clusterKit, ENGINE, type ClusterOptions, type ClusterRun, type GroupedMatch } from './cluster.js'
+export { assertStable, compareRuns, StabilityStop, type LevelReport, type StabilityOptions, type StabilityReport } from './stability.js'
