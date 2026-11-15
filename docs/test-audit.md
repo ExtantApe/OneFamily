@@ -53,6 +53,7 @@ Kept by this repo's owning session (Genealogy), per `~/Code/CLAUDE.md`, "Test se
 **Gaps skipped, and why:**
 - **S6, spot checks against a service's own pages:** they need automated visits to real services, which the terms register refuses. Revisit with a partnership.
 - **S7, genetic sanity across family kits:** built 2026-11-15 in `packages/core/src/sanity.ts`, covered by `packages/core/test/sanity.test.ts` (9 tests): pairs in and out of range both ways, a missing close relative, an unranged relationship reported as not checked, lists that disagree, sides that agree and disagree for a mother and a father, small matches ignored, and too few to judge. No app screen calls it yet; combined runs must call `assertSane` first.
+- **Theory chart, both candidate fathers (K337):** 2026-11-15, `apps/desktop/test/logic.test.ts` checks that a theory document drawn with OnePedigree's `uncertainParents: 'branches'` shows both the recorded and the candidate father, each joined by an uncertain line. The screen's radio switch itself is covered only by the typecheck; it hasn't been clicked in the built app.
 - **S8, the stability report between runs:** not built, since there's only one run so far. Filed as a task.
 - **S9, claims checked against the data:** theories aren't stored as data yet. Filed as a task.
 - **S10, the owner approves theory status changes:** no theory editing exists yet. It's part of S9's task.
