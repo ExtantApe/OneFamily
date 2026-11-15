@@ -17,7 +17,11 @@ DNA-first genetic genealogy for Mac. OneFamily groups your DNA matches before yo
 - OneFamily for Mac, v0: runs on a made-up demo family. It's been built and opened locally, not released. It carries its own copy of Node, so nothing extra needs installing (ADR 0007).
 - the Chrome extension the app collects with (`apps/extension`, ADR 0009). It stores nothing, talks to the app only through Chrome's native messaging, and asks for your OK in the app. It only works with a local mock site: every DNA service's terms say no to automated page visits. It's been tested with Vitest against the mock site, and hasn't been loaded into Chrome yet.
 
+<<<<<<< HEAD
 275 tests pass locally. On 2026-11-15 the match importer and grouping reproduced a real finished family run (groups ARI 0.98, sides identical), outside the repo. The raw layouts haven't been checked against a real downloaded file. The register's verdicts are a careful reading of public pages, not legal advice, and a legal review is still to come.
+=======
+282 tests pass locally. The raw layouts haven't been checked against a real downloaded file. The register's verdicts are a careful reading of public pages, not legal advice, and a legal review is still to come.
+>>>>>>> 4464604 (Add the stability report between runs (S8))
 
 ## What it will do
 
