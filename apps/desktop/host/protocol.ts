@@ -136,6 +136,8 @@ export type GedmatchStatus = {
   kits: { kit: string; name: string; hasRaw: boolean; gedmatchId: string | null; setting: 'opt-in' | 'opt-out' | 'research' | 'private' | null; minor: boolean; recordedAt: string | null; warnings: string[]; recommended: boolean }[]
 }
 
+export type MapStatus = { installed: boolean; name: string; publisher: string; url: string; megabytes: number; madeBy: string; license: string; installedOn: string | null }
+
 export type HostApi = {
   status: { params: Record<string, never>; result: Status }
   chooseLibrary: { params: { path: string }; result: Status }
@@ -188,5 +190,10 @@ export type HostApi = {
   /** Trust a developer build of the extension, by its ID. Recorded in the decisions log; `confirm` must be true. */
   trustDeveloperExtension: { params: { id: string; confirm: boolean }; result: ExtensionView }
   untrustDeveloperExtension: { params: { id: string }; result: ExtensionView }
+  /** The GRCh37 genetic map: whether it's on this Mac, and where it comes from. */
+  geneticMap: { params: Record<string, never>; result: MapStatus }
+  /** Download it from its publisher, checked against a pinned checksum. `confirm` must be true. */
+  downloadGeneticMap: { params: { confirm: boolean }; result: MapStatus }
+  removeGeneticMap: { params: Record<string, never>; result: MapStatus }
 }
 export type HostMethod = keyof HostApi

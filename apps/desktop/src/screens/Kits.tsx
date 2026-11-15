@@ -1,6 +1,7 @@
 import { Eye, EyeOff } from 'lucide-react'
 import type { KitsResult } from '../../host/protocol'
 import { Facts, Icon, useNames } from '../ui'
+import { GeneticMapCard } from './GeneticMap'
 
 const RAW_NAMES: Record<string, string> = { ancestry: 'AncestryDNA layout', '23andme': '23andMe layout', myheritage: 'MyHeritage layout', ftdna: 'FamilyTreeDNA layout', livingdna: 'Living DNA layout' }
 
@@ -68,11 +69,11 @@ export function KitsScreen({ data }: { data: KitsResult }) {
             ))}
           </ul>
           <p className="ol-hint" style={{ marginTop: 8 }}>
-            From their raw DNA, using an approximate map of 1 cM per million base pairs ({data.comparisons[0]!.map}). That’s good enough to see close
-            relatives, not to measure small segments exactly. The relationships listed are every one whose observed range in the Shared cM Project (version 4) holds that number, from DNA alone. Phasing and rebuilding stop if the DNA doesn’t fit the relationship they rely on.
+            Measured from their raw DNA on this Mac, with {data.comparisons[0]!.map}. The approximate rule is good enough to see close relatives, not to measure small segments exactly. The relationships listed are every one whose observed range in the Shared cM Project (version 4) holds that number, from DNA alone. Phasing and rebuilding stop if the DNA doesn’t fit the relationship they rely on.
           </p>
         </section>
       )}
+      <GeneticMapCard />
     </>
   )
 }
