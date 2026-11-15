@@ -77,7 +77,8 @@ export type KitSummary = {
 export type KitsResult = {
   kits: KitSummary[]
   /** The family kits compared with each other on this Mac, from their raw DNA. */
-  comparisons: { a: string; b: string; totalCm: number; segments: number; longestCm: number; map: string }[]
+  /** `fits`: every published relationship (Shared cM Project v4) whose range holds totalCm, in plain words. */
+  comparisons: { a: string; b: string; totalCm: number; segments: number; longestCm: number; map: string; fits: string[] }[]
 }
 
 export type MatchRow = {

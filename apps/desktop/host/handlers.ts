@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto'
 import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { DatabaseSync } from 'node:sqlite'
 import { isAbsolute, join, relative, resolve, sep } from 'node:path'
-import { BlindGate, compareKits, ONE_CM_PER_MB, sha256Hex, TermsRegister, type Unblinding } from '@extantape/onefamily-core'
+import { BlindGate, compareKits, fittingRelationships, ONE_CM_PER_MB, RELATIONSHIP_WORDS, sha256Hex, TermsRegister, type Unblinding } from '@extantape/onefamily-core'
 import { clusterKit, type ClusterRun } from '@extantape/onefamily-analysis'
 import { importCollectedPages, importGenealogyAssistant, importRawDna, type ImportResult, type RawImport } from '@extantape/onefamily-connectors'
 import {
@@ -455,7 +455,7 @@ export function createHost(opts: {
           const b = data.kits[j]!
           if (!a.raw || !b.raw) continue
           const c = compareKits(a.raw.calls, b.raw.calls, { map: ONE_CM_PER_MB, errorTolerance: 50 })
-          comparisons.push({ a: a.result.kit, b: b.result.kit, totalCm: Math.round(c.totalCm), segments: c.segments.length, longestCm: Math.round(c.longestCm), map: c.map })
+          comparisons.push({ a: a.result.kit, b: b.result.kit, totalCm: Math.round(c.totalCm), segments: c.segments.length, longestCm: Math.round(c.longestCm), map: c.map, fits: fittingRelationships(c.totalCm).map((r) => RELATIONSHIP_WORDS[r]) })
         }
       return { kits, comparisons }
     },

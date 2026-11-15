@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { assertSane, checkKitPairs, checkSides, SanityStop, type MatchObservation, type MatchSide } from '../src/index.js'
+import { assertSane, checkKitPairs, checkSides, fittingRelationships, SanityStop, type MatchObservation, type MatchSide } from '../src/index.js'
 
 const obs = (kit: string, match: string, cm: number, side: MatchSide = 'unassigned'): MatchObservation => ({
   service: 'planted', kit, match, name: match, sharedCm: cm, unweightedCm: cm, longestCm: Math.min(cm, 50), segments: 3, side,
@@ -55,5 +55,13 @@ describe('sides (S7)', () => {
     const father = Array.from({ length: 30 }, (_, i) => obs('DAD', `f${i}`, 50))
     const child = father.map((m) => obs('KID', m.match, 25, 'maternal'))
     expect(checkSides(child, father, 'father')[0]!.code).toBe('sides.disagree')
+  })
+})
+
+describe('what a cM fits', () => {
+  it('lists every published relationship whose range holds it, and none outside', () => {
+    expect(fittingRelationships(3400)).toEqual(['parent-child', 'full-sibling'])
+    expect(fittingRelationships(4000)).toEqual([])
+    expect(fittingRelationships(500)).toEqual(expect.arrayContaining(['great-grandparent', 'first-cousin', 'second-cousin']))
   })
 })

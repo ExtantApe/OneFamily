@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { fileURLToPath } from 'node:url'
-import { compareHalves, compareKits, phaseWithParent, rebuildFromDescendants, RebuildRefused, xPathPossible } from '@extantape/onefamily-core'
+import { checkRawPair, compareHalves, compareKits, phaseWithParent, rebuildFromDescendants, RebuildRefused, SanityStop, xPathPossible } from '@extantape/onefamily-core'
 import { loadTermsRegister } from '../../core/src/node.js'
 import { AlleleBook, child, founderGenome, genotypesOf, makePanel, Rng, writeRaw, type Genome } from '@extantape/onefamily-simulate'
 import { importRawDna } from '../src/index.js'
@@ -63,6 +63,24 @@ describe('rebuilding someone who never tested', async () => {
   it("the rebuilt kit matches the person's sibling, and not a stranger", () => {
     expect(compareHalves(halves, s, { minMarkers: 150 }).totalCm).toBeGreaterThan(1000)
     expect(compareHalves(halves, x, { minMarkers: 150 }).totalCm).toBe(0)
+  })
+})
+
+describe('the cross-kit check guards both (S7)', async () => {
+  const halfSib = child(P, R, rng)
+  const [q, x, g1, hs, ...ch] = await Promise.all([kitOf(Q), kitOf(stranger), kitOf(G1), kitOf(halfSib), ...kids.map(kitOf)])
+  it('phasing stops when the stated parent is a stranger or a grandparent', () => {
+    expect(() => phaseWithParent(ch[0]!, x)).toThrow(SanityStop)
+    expect(() => phaseWithParent(ch[0]!, g1)).toThrow(/outside 2376 to 3720 cM for parent-child/)
+  })
+  it('rebuilding stops when the other parent is wrong, or the children are only half siblings', () => {
+    expect(() => rebuildFromDescendants(ch, x, { synthetic: true })).toThrow(SanityStop)
+    expect(() => rebuildFromDescendants([ch[0]!, hs], q, { synthetic: true })).toThrow(/child 1 and child 2.*full-sibling/)
+  })
+  it('measures a pair and reports what was stated against what fits', () => {
+    const r = checkRawPair({ label: 'A', calls: ch[0]! }, { label: 'B', calls: ch[1]! }, 'full-sibling')
+    expect(r.cm).toBeGreaterThan(1613)
+    expect(r.issues).toEqual([])
   })
 })
 

@@ -258,6 +258,7 @@ describe('the demo family', () => {
     expect(kits.every((k) => k.blind && k.matches > 0 && k.raw && k.raw.markers > 10000)).toBe(true)
     // The two family kits are parent and child: about half the genome, compared on this Mac.
     expect(comparisons[0]!.totalCm).toBeGreaterThan(3000)
+    expect(comparisons[0]!.fits).toContain('parent or child')
 
     // The chromosome browser's data: parent and child share along all 22 chromosomes.
     const seg = await h.segments({ a: kits[0]!.kit, b: kits[1]!.kit })
