@@ -29,12 +29,12 @@ Option 3.
 - **First launch** is worked out from what's recorded, so quitting halfway resumes: choose a library folder (`initLibrary`), say which kind of use this is (recorded once as a `use-declaration` decision; law-enforcement use isn't offered), then set up backups. Two destinations are required by default. Going to one, then to none, takes one confirmation each, and each step is a `backup-bypass` decision.
 - **The demo** is a planted family (`standardFamily`, seed 1), stored as frozen exports in its own library inside the app's state folder, never in the user's library. It holds each family kit's match export, a raw DNA file per kit, the tester's recorded tree as a OnePedigree document, and the planted answers.
 - **Blindness holds in the app.** The theory page reads the recorded tree only after the kit is unblinded, which is a recorded decision.
-- **The theory page** draws the recorded tree with `@extantape/onepedigree-react`, pinned at `0.1.0-alpha.22`, the newest version on npm on 2026-11-10. The planted misattributed father is also written in OnePedigree's `uncertainParents` shape, with the recorded and biological men as candidates. OneFamily will use that field from OnePedigree `0.1.0-alpha.21`, which isn't on npm yet (alpha.20 must never be used), so the chart shows the recorded tree and the candidates are listed beside it. Their odds are placeholders and are shown as "not computed yet".
+- **The theory page** draws the recorded tree with `@extantape/onepedigree-react`, pinned at `0.1.0-alpha.22`, the newest version on npm on 2026-11-10. The planted misattributed father is also written in OnePedigree's `uncertainParents` shape, with the recorded and biological men as candidates. Since 2026-11-15 (K337) the chart draws both candidates side by side with OnePedigree's branches mode, and a switch shows the tree as recorded (alpha.20 must never be used). Their odds are placeholders and are shown as "not computed yet".
 - **Privacy** swaps every name on screen for a stand-in, keyed on each word of the name, with a fresh random salt each session.
 
 ## Limits and stubs
 
-- **Node is needed on the Mac**, version 22.13 or later (for `node:sqlite` without a flag). The app looks in `ONEFAMILY_NODE`, `/opt/homebrew/bin`, `/usr/local/bin`, then `PATH`. Before a public release this needs a bundled Node, such as a Node single-executable build as a Tauri sidecar. That adds about 40 to 100 MB, and is still to be decided.
+- **Node ships inside the app** (decided 2026-11-15, K338). `apps/desktop/scripts/fetch-node.mjs` downloads the official Node build from nodejs.org (pinned at v26.13.0), checks it against the SHA-256 pinned in the script, and keeps only `bin/node` and Node's license. Tauri bundles it as an external binary in `Contents/MacOS/node`, and Node's license goes in `Resources/licenses`. A release build runs only that copy or `ONEFAMILY_NODE`; a development build may still fall back to Homebrew or `PATH`. It costs about 147 MB in the app and about 45 MB compressed. A Node single-executable build was set aside because it doesn't make the file smaller, and running the official binary unchanged is simpler to check. Rewriting the host in Rust was set aside because the packages need to run unchanged in Node.
 - **Keychain storage is a stub** (`host/keys.ts`). With no keys, backups to cloud-synced folders are refused with a plain reason, and nothing is written there.
 - **Raw DNA in the demo is stored unencrypted.** It's made up. ADR 0005's encryption of raw DNA waits on the Keychain, and real raw imports aren't in v0.
 - **The terms register isn't loaded.** The app passes an empty register, which refuses every real service. Only planted data can be read.
@@ -48,4 +48,4 @@ Option 3.
 
 - The packages run the same code in tests, the CLI and the app.
 - The host is the one place that touches files, so file rules are enforced in one place.
-- Shipping the app means shipping Node, which is the main cost of this choice.
+- Shipping the app means shipping Node, which is the main cost of this choice: about 45 MB more in the download.

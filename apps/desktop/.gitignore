@@ -2,3 +2,4 @@ src-tauri/target/
 src-tauri/gen/
 dist/
 host-dist/
+src-tauri/binaries/

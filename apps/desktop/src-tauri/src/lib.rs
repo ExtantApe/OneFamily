@@ -30,13 +30,23 @@ impl Drop for Sidecar {
 #[derive(Default, Clone)]
 struct Host(Arc<Mutex<Option<Sidecar>>>);
 
-/// Node, from ONEFAMILY_NODE, the usual install places, or PATH. Node 22 or later is needed.
+/// Node for the host. ONEFAMILY_NODE wins when set (for development). Then the copy shipped inside the app,
+/// beside this program in Contents/MacOS (ADR 0007, K338). A development build without it falls back to the
+/// usual install places and PATH. Node 22.13 or later is needed.
 fn find_node() -> Option<PathBuf> {
     if let Ok(p) = std::env::var("ONEFAMILY_NODE") {
         let p = PathBuf::from(p);
         if p.is_file() {
             return Some(p);
         }
+    }
+    if let Some(p) = std::env::current_exe().ok().and_then(|exe| exe.parent().map(|d| d.join("node"))) {
+        if p.is_file() {
+            return Some(p);
+        }
+    }
+    if !cfg!(debug_assertions) {
+        return None;
     }
     for p in ["/opt/homebrew/bin/node", "/usr/local/bin/node"] {
         let p = PathBuf::from(p);
@@ -60,7 +70,7 @@ fn host_script(app: &tauri::AppHandle) -> Option<PathBuf> {
 }
 
 fn start(app: &tauri::AppHandle) -> Result<Sidecar, String> {
-    let node = find_node().ok_or("OneFamily needs Node.js 22 or later on this Mac for now, and couldn’t find it. Install Node, or set ONEFAMILY_NODE to its path.")?;
+    let node = find_node().ok_or("The Node runtime that ships inside OneFamily is missing, so the app can’t open your library. Reinstall OneFamily from its download.")?;
     let script = host_script(app).ok_or("The app’s file helper (host.mjs) is missing. Run `pnpm build:host` in apps/desktop.")?;
     let state_dir = app.path().home_dir().map_err(|e| e.to_string())?.join("Library").join("Application Support").join("OneFamily");
     let mut child = Command::new(node)
