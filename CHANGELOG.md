@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The app carries its own Node, 2026-11-15 (K338). `pnpm fetch:node` downloads Node v26.13.0 from nodejs.org, checks the pinned SHA-256 and puts it where Tauri bundles it, so the Mac app no longer needs Node installed. A release build never falls back to another Node on the Mac. Also fixed two faults in the packaged helper that kept a built app from opening a library: its shared code was split into chunk files the app didn't include, and the build dropped the `node:` prefix from `node:sqlite`. Checked by building the app and running its helper with no PATH; the app window wasn't clicked through.
+
 - Theory chart, 2026-11-15: the Theory screen now draws both candidate fathers side by side, each on its own branch marked uncertain with its chance, using OnePedigree's branches mode. A switch goes back to the tree as recorded. Tested in logic tests; not yet clicked in the built app.
 
 - Cross-kit check (S7), 2026-11-15: `checkKitPairs` and `checkSides` in `@extantape/onefamily-core`. Two family kits must share cM inside the Shared cM Project v4 range for their stated relationship, and a close relative must be in the other's list. Matches shared with a tested mother or father must sit on that side of the kit's list; more than 5% on the wrong side stops the run (`assertSane`). A relationship with no published range is reported as not checked. Tested on constructed data only.
