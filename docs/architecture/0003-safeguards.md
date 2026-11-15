@@ -12,7 +12,7 @@ Each safeguard is enforced in code and covered by tests. A promise that's only w
 | S4 | Import checks fail loudly | Expected columns and types, values in range (shared cM 6 to 3,600; longest segment no bigger than the total), known date formats |
 | S5 | Count reconciliation | Unique IDs; previous export + new − gone = this export; the row count equals the count the service showed, when recorded |
 | S6 | Spot checks against the source | A sample of matches compared with the service's own pages, where the terms register allows it |
-| S7 | Genetic sanity across kits | Family kits share cM in range for their DNA relationship; side assignments agree across kits |
+| S7 | Genetic sanity across kits | Family kits share cM in range for their DNA relationship; side assignments agree across kits. Built in `sanity.ts` (2026-11-15): out-of-range pairs, missing close relatives and more than 5% of shared matches on the wrong side stop the run; relationships with no published range are reported as not checked |
 | S8 | Stability report | A run stops for review if more than a few percent of placed people change lines |
 | S9 | Claims checked against data | Every match cited in a theory is checked against the stored observations |
 | S10 | People decide conclusions | A theory's status changes only with the user's approval, which is logged |

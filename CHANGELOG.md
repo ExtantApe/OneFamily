@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Cross-kit check (S7), 2026-11-15: `checkKitPairs` and `checkSides` in `@extantape/onefamily-core`. Two family kits must share cM inside the Shared cM Project v4 range for their stated relationship, and a close relative must be in the other's list. Matches shared with a tested mother or father must sit on that side of the kit's list; more than 5% on the wrong side stops the run (`assertSane`). A relationship with no published range is reported as not checked. Tested on constructed data only.
+
 - Owner's 2026-11-11 answers applied, 2026-11-15 (`docs/decisions.md`). The terms register gains `import_own_export`, and match lists a user exported themselves now import for the DNA services (N101 B); automated collection is still refused. `USE-POLICY.md` now says that identifying remains is allowed through an accredited lab or a nonprofit, that identifying suspects is ruled out, and that wildlife agencies may only work on animal cases (N102). Rebuilding someone who never tested runs on real data once the person's choice is recorded, and the result is always labelled "rebuilt, partial" (N126 B).
 
 - Renamed from OneLineage to OneFamily, 2026-11-14 (D174). The repo moved to ExtantApe/OneFamily, the app is OneFamily for Mac, the packages are `@extantape/onefamily-*` (none has been published), OnePedigree comes from `@extantape/onepedigree-*` 0.1.0-alpha.22, the app and native-messaging identifiers are `com.extantape.onefamily` (D190), the CSS prefix is `--of-`, and the app's folder, Keychain item and backup folders use the new name. Nothing was released under the old name, so nothing reads the old names. The name OneLineage moves to a separate tree-of-life tool.
