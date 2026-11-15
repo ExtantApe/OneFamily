@@ -3,7 +3,7 @@
  * shared matches per match, and match trees.
  *
  * Checked before anything is kept:
- * - the terms register must allow `read_own_matches` for the service, unless the data is made up ("planted")
+ * - the terms register must allow `import_own_export` for the service (files the user exported themselves), unless the data is made up ("planted")
  * - every column and value is checked, and problems refuse the whole import (S4)
  * - IDs are unique, and shared-match files must point at matches that are in the list (S5)
  * - every record carries its file, the file's SHA-256 and its row (S12)
@@ -61,7 +61,7 @@ export async function importGenealogyAssistant(input: ImportInput): Promise<Impo
   const note = (code: string, message: string, at: Partial<Issue> = {}) => issues.push({ severity: 'notice', code, message, ...at })
 
   // Terms first: nothing is parsed if the service's terms don't clearly allow it.
-  if (!SYNTHETIC_SOURCES.has(input.source)) input.terms.require(input.source, 'read_own_matches')
+  if (!SYNTHETIC_SOURCES.has(input.source)) input.terms.require(input.source, 'import_own_export')
 
   const names = Object.keys(input.files)
   const listNames = names.filter((n) => LIST_FILE.test(basename(n)))

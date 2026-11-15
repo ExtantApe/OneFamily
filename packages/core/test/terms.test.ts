@@ -41,6 +41,14 @@ describe('the repo terms register', () => {
     expect(reg.allows('gedmatch', 'site_export')).toBe(false)
   })
 
+  it('allows importing match lists users exported themselves, and still refuses automated reading (owner, N101 B)', () => {
+    for (const site of ['ancestry', 'myheritage', '23andme', 'ftdna', 'gedmatch', 'livingdna', 'yfull']) {
+      expect(reg.allows(site, 'import_own_export')).toBe(true)
+      expect(reg.allows(site, 'automate_page_visits')).toBe(false)
+    }
+    for (const site of ['wikitree', 'familysearch']) expect(reg.verdict(site, 'import_own_export')).toBe('n/a')
+  })
+
   it('refuses writing labels on Ancestry', () => {
     expect(() => reg.require('ancestry', 'write_labels')).toThrow(/not-allowed/)
   })

@@ -32,8 +32,15 @@ describe('half-kits from one tested parent', async () => {
 describe('rebuilding someone who never tested', async () => {
   const [q, s, x, ...ch] = await Promise.all([kitOf(Q), kitOf(S), kitOf(stranger), ...kids.map(kitOf)])
 
-  it('is refused for real data without a recorded consent', () => {
+  it('is refused for real data without a recorded choice', () => {
     expect(() => rebuildFromDescendants(ch, q, { decision: { kind: 'other', seq: 1 } } as never)).toThrow(RebuildRefused)
+    expect(() => rebuildFromDescendants(ch, q, {} as never)).toThrow(RebuildRefused)
+  })
+
+  it('runs on real data once the choice is recorded, and always labels the result (owner, N126 B)', () => {
+    const r = rebuildFromDescendants(ch, q, { decision: { kind: 'rebuild-consent', seq: 7 } })
+    expect(r.label).toBe('rebuilt, partial')
+    expect(r.known + r.halfKnown).toBeGreaterThan(0)
   })
 
   const { rebuilt, halves, known, halfKnown, total } = rebuildFromDescendants(ch, q, { synthetic: true })

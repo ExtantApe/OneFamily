@@ -7,6 +7,7 @@ sources:
   - https://developers.familysearch.org/main/docs/compatibility-review-process
 capabilities:
   read_own_matches: n/a
+  import_own_export: n/a
   automate_page_visits: not-allowed
   site_export: allowed
   write_labels: unclear
@@ -21,6 +22,7 @@ Read 2026-11-10, from public pages only, with no sign-in. Terms of Use, updated 
 | Capability | Verdict | Why |
 | --- | --- | --- |
 | `read_own_matches` | n/a | FamilySearch has no DNA matching. |
+| `import_own_export` | n/a | This service has no DNA match lists. |
 | `automate_page_visits` | not-allowed | "Unless you have received our prior written permission, you will not use any software, technology, or device to perform a bulk download, to scrape content, or to otherwise harvest any information or materials from this site." |
 | `site_export` | allowed | "You may view, download, and print materials from this site only for your personal, noncommercial use." |
 | `write_labels` | unclear | Not addressed. Writes go only through approved apps. |

@@ -7,6 +7,7 @@ sources:
   - https://www.ancestry.com/c/legal/lawenforcement
 capabilities:
   read_own_matches: unclear
+  import_own_export: allowed
   automate_page_visits: not-allowed
   site_export: allowed
   write_labels: not-allowed
@@ -21,6 +22,7 @@ Read 2026-11-10, from public pages only, with no sign-in. Terms and Conditions, 
 | Capability | Verdict | Why |
 | --- | --- | --- |
 | `read_own_matches` | unclear | Viewing matches is part of the service, but: "You will use other Users' content only within Ancestry Services." |
+| `import_own_export` | allowed | The owner's deliberate reading of the terms (2026-11-11, N101 B), pending a legal review: a match list that a user exports or saves themselves may be imported for their own personal research. This covers the user's own files only. Automated collection is still governed by `automate_page_visits`. |
 | `automate_page_visits` | not-allowed | "Not to access, acquire, copy, or monitor any portion of the Services by any manual, automated, or programmatic method that exceeds the intended standard human use of the Services." |
 | `site_export` | allowed | For your own DNA data: "While there are no restrictions on how you use your DNA Data". Match-list export isn't mentioned, so it isn't covered by this verdict. |
 | `write_labels` | not-allowed | The same clause on automated or programmatic methods. |

@@ -7,6 +7,7 @@ sources:
   - https://www.familytreedna.com/legal/law-enforcement-guide
 capabilities:
   read_own_matches: unclear
+  import_own_export: allowed
   automate_page_visits: not-allowed
   site_export: allowed
   write_labels: not-allowed
@@ -21,6 +22,7 @@ Read 2026-11-10, from public pages only, with no sign-in. Terms of Service, effe
 | Capability | Verdict | Why |
 | --- | --- | --- |
 | `read_own_matches` | unclear | Matching is part of the service, but "you must not reproduce … download, store, or transmit any of the material on our Website" without written consent. |
+| `import_own_export` | allowed | The owner's deliberate reading of the terms (2026-11-11, N101 B), pending a legal review: a match list that a user exports or saves themselves may be imported for their own personal research. This covers the user's own files only. Automated collection is still governed by `automate_page_visits`. |
 | `automate_page_visits` | not-allowed | Users must not "use any robot, spider, or other devices or any other means to access, scrape, or crawl any pages or other services on the Website for any purpose". |
 | `site_export` | allowed | The service exists in part "to allow you to download your Genetic Results ('Raw DNA Data')". Match-list export isn't covered by this verdict. |
 | `write_labels` | not-allowed | The same robot clause. |

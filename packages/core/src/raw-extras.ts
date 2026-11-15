@@ -3,8 +3,10 @@
  * - `phaseWithParent`: split a child's raw kit into the half from one tested parent and the half from the
  *   other parent. Each half-kit makes a match's side certain.
  * - `rebuildFromDescendants`: partly rebuild a relative who never tested from children and the other parent.
- *   That's a genetic profile of someone who never consented, so on real data it needs the owner's rule and
- *   a recorded consent. It's refused otherwise.
+ *   That's a genetic profile of someone who never consented. The owner's rule (2026-11-11, N126 B): anyone may
+ *   do it, on real data too, once they've chosen to and that choice is recorded in their decisions log. The
+ *   result is always labelled "rebuilt, partial", stays in their own library, and is never uploaded or shared
+ *   by the app. Without a recorded choice it's refused.
  * - `xPathPossible`: whether X DNA can pass along a line, which rules branches in or out for X matches.
  */
 import type { KitCalls } from './compare.js'
@@ -56,7 +58,7 @@ export function phaseWithParent(childKit: KitCalls, parentKit: KitCalls): { from
 
 export class RebuildRefused extends Error {
   constructor() {
-    super('Rebuilding the DNA of someone who never tested needs the owner\'s rule (N126) and a recorded consent for real data. It runs on made-up test families only.')
+    super('Rebuilding the DNA of someone who never tested needs your recorded choice in the decisions log before it runs on real data.')
     this.name = 'RebuildRefused'
   }
 }
@@ -69,7 +71,9 @@ export type RebuildConsent = { synthetic: true } | { decision: { kind: 'rebuild-
  * alleles came from P is a known heterozygote. One allele seen is kept as half-known ("A?"). Nothing is
  * filled in that wasn't observed.
  */
-export function rebuildFromDescendants(children: readonly KitCalls[], partner: KitCalls, consent: RebuildConsent): { rebuilt: Map<string, Calls>; halves: HalfKit[]; known: number; halfKnown: number; total: number } {
+export const REBUILT_LABEL = 'rebuilt, partial' as const
+
+export function rebuildFromDescendants(children: readonly KitCalls[], partner: KitCalls, consent: RebuildConsent): { label: typeof REBUILT_LABEL; rebuilt: Map<string, Calls>; halves: HalfKit[]; known: number; halfKnown: number; total: number } {
   if (!('synthetic' in consent) && consent.decision?.kind !== 'rebuild-consent') throw new RebuildRefused()
   if (children.length < 2) throw new Error('rebuilding needs at least two children')
   const seen = new Map<string, { pos: number; chr: string; got: Set<string> }>()
@@ -101,7 +105,7 @@ export function rebuildFromDescendants(children: readonly KitCalls[], partner: K
     c.rsid = order.map((i) => c.rsid[i]!); c.position = order.map((i) => c.position[i]!); c.call = order.map((i) => c.call[i]!)
   }
   // Compare the person with others through `halves` (with compareHalves): a partial genotype can't rule strangers out.
-  return { rebuilt, halves, known, halfKnown, total: seen.size }
+  return { label: REBUILT_LABEL, rebuilt, halves, known, halfKnown, total: seen.size }
 }
 
 /**

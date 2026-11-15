@@ -57,4 +57,4 @@ Kept by this repo's owning session (Genealogy), per `~/Code/CLAUDE.md`, "Test se
 - **S9, claims checked against the data:** theories aren't stored as data yet. Filed as a task.
 - **S10, the owner approves theory status changes:** no theory editing exists yet. It's part of S9's task.
 - **Native-only behaviour:** the Mac notification, the menu item, the folder picker, the real Keychain, and the extension inside Chrome. These need the running app or the owner's Chrome, so they're listed for a by-hand test before the first release.
-- **Real data of any kind:** deliberately untested until the owner's question N101 is answered.
+- **Real data of any kind:** still untested. N101 was decided on 2026-11-11 and applied on 2026-11-15, so the next audit should cover a real export the owner provides, kept out of the repo.

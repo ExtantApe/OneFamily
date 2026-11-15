@@ -8,6 +8,8 @@
 
 export const CAPABILITIES = [
   'read_own_matches',
+  /** Importing a match list the user exported themselves, for their own research (owner's reading, N101). */
+  'import_own_export',
   'automate_page_visits',
   'site_export',
   'write_labels',

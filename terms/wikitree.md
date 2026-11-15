@@ -7,6 +7,7 @@ sources:
   - https://github.com/wikitree/wikitree-api
 capabilities:
   read_own_matches: n/a
+  import_own_export: n/a
   automate_page_visits: unclear
   site_export: unclear
   write_labels: unclear
@@ -21,6 +22,7 @@ Read 2026-11-10, from public pages only, with no sign-in. The Terms of Service p
 | Capability | Verdict | Why |
 | --- | --- | --- |
 | `read_own_matches` | n/a | WikiTree is a shared tree, not a DNA-matching service. |
+| `import_own_export` | n/a | This service has no DNA match lists. |
 | `automate_page_visits` | unclear | The terms page is unread. The block page itself mentions abuse by AI-scraping bots. |
 | `site_export` | unclear | The terms page is unread. |
 | `write_labels` | unclear | The API is read-only, and edits go through the site itself. |

@@ -6,6 +6,7 @@ sources:
   - https://www.yfull.com/terms/
 capabilities:
   read_own_matches: unclear
+  import_own_export: allowed
   automate_page_visits: unclear
   site_export: unclear
   write_labels: unclear
@@ -20,6 +21,7 @@ Read 2026-11-10, from public pages only, with no sign-in. Terms, last updated 5 
 | Capability | Verdict | Why |
 | --- | --- | --- |
 | `read_own_matches` | unclear | Not addressed. |
+| `import_own_export` | allowed | The owner's deliberate reading of the terms (2026-11-11, N101 B), pending a legal review: a match list that a user exports or saves themselves may be imported for their own personal research. This covers the user's own files only. Automated collection is still governed by `automate_page_visits`. |
 | `automate_page_visits` | unclear | Not addressed. |
 | `site_export` | unclear | The only mention is that YFull will tell the client when raw data is available. |
 | `write_labels` | unclear | Not addressed. |

@@ -7,7 +7,7 @@ DNA-first genetic genealogy for Mac. OneFamily groups your DNA matches before yo
 - the design (`docs/architecture/`) and the use policy
 - the terms register (`terms/`, read 2026-11-10), and the code that enforces it
 - a simulator of made-up families with planted answers
-- importers for Genealogy Assistant-style match lists (real Ancestry data is refused while its terms are unclear), and for raw DNA in five companies' layouts
+- importers for Genealogy Assistant-style match lists you export yourself (allowed by the owner's reading of the terms, pending a legal review), and for raw DNA in five companies' layouts
 - match grouping from the DNA alone (ADR 0006)
 - kit-to-kit comparison, triangulation and segment painting
 - sibling phasing, half-kits and rebuilt relatives (made-up data only)
@@ -17,7 +17,7 @@ DNA-first genetic genealogy for Mac. OneFamily groups your DNA matches before yo
 - OneFamily for Mac, v0: runs on a made-up demo family. It's been built and opened locally, not released, and needs Node 22.13 or later on the Mac for now (ADR 0007).
 - the Chrome extension the app collects with (`apps/extension`, ADR 0009). It stores nothing, talks to the app only through Chrome's native messaging, and asks for your OK in the app. It only works with a local mock site: every DNA service's terms say no to automated page visits. It's been tested with Vitest against the mock site, and hasn't been loaded into Chrome yet.
 
-253 tests pass locally. The raw layouts haven't been checked against a real downloaded file. The register's verdicts are a careful reading of public pages, not legal advice, and a legal review is still to come.
+256 tests pass locally. The raw layouts haven't been checked against a real downloaded file. The register's verdicts are a careful reading of public pages, not legal advice, and a legal review is still to come.
 
 ## What it will do
 
