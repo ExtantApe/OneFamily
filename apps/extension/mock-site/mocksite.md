@@ -6,6 +6,7 @@ sources:
   - https://github.com/ExtantApe/OneFamily/tree/main/apps/extension/mock-site
 capabilities:
   read_own_matches: allowed
+  import_own_export: allowed
   automate_page_visits: allowed
   site_export: allowed
   write_labels: allowed

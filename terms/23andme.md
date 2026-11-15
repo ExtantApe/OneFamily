@@ -8,6 +8,7 @@ sources:
   - https://www.23andme.org/law-enforcement-guide/
 capabilities:
   read_own_matches: unclear
+  import_own_export: allowed
   automate_page_visits: not-allowed
   site_export: allowed
   write_labels: not-allowed
@@ -22,6 +23,7 @@ Read 2026-11-10, from public pages only, with no sign-in. Terms of Service, last
 | Capability | Verdict | Why |
 | --- | --- | --- |
 | `read_own_matches` | unclear | Contacting matches is allowed, but users must not "use any information received through the Services to attempt to identify other customers … or for any forensic use". |
+| `import_own_export` | allowed | The owner's deliberate reading of the terms (2026-11-11, N101 B), pending a legal review: a match list that a user exports or saves themselves may be imported for their own personal research. This covers the user's own files only. Automated collection is still governed by `automate_page_visits`. |
 | `automate_page_visits` | not-allowed | Users must not "use manual or automated software, devices, scripts, robots, or other means or processes to access, data mine, extract, 'scrape,' 'crawl,' or 'spider' any web pages". |
 | `site_export` | allowed | "You can access and download your Personal Information processed by 23andMe." |
 | `write_labels` | not-allowed | The same automated-software clause. |

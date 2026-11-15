@@ -10,4 +10,4 @@ First read on 2026-11-10. Reread a site's terms when it changes them, and before
 
 - **Automated page visits:** not allowed on any DNA service read. That means Ancestry, MyHeritage, 23andMe, GEDmatch and FamilyTreeDNA. Anything automated waits for a partnership.
 - **Downloading your own raw DNA:** allowed by Ancestry, MyHeritage, 23andMe and FamilyTreeDNA. That's OneFamily's clean data path.
-- **Match lists:** no service's terms mention exporting your match list. The `site_export` verdicts cover raw DNA downloads only. Whether OneFamily may import match lists that users export themselves is an open question for the owner.
+- **Match lists:** no service's terms mention exporting your match list, and the `site_export` verdicts cover raw DNA downloads only. On 2026-11-11 the owner decided (N101 B) that OneFamily may import a match list a user exports or saves themselves, for their own research, as a deliberate reading of the terms pending a legal review. That's the `import_own_export` capability. Automated collection stays `not-allowed`.

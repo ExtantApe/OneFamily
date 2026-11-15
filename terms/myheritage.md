@@ -6,6 +6,7 @@ sources:
   - https://www.myheritage.com/terms-and-conditions
 capabilities:
   read_own_matches: unclear
+  import_own_export: allowed
   automate_page_visits: not-allowed
   site_export: allowed
   write_labels: not-allowed
@@ -20,6 +21,7 @@ Read 2026-11-10, from public pages only, with no sign-in. Terms and Conditions, 
 | Capability | Verdict | Why |
 | --- | --- | --- |
 | `read_own_matches` | unclear | Matches are part of the service, but "You must not copy or store electronically any part of the Website or its contents". |
+| `import_own_export` | allowed | The owner's deliberate reading of the terms (2026-11-11, N101 B), pending a legal review: a match list that a user exports or saves themselves may be imported for their own personal research. This covers the user's own files only. Automated collection is still governed by `automate_page_visits`. |
 | `automate_page_visits` | not-allowed | "The use of AI agents, bots, automated systems, or any other artificial intelligence technology … to access, scrape, crawl, harvest, or collect data from the Website or Service … is strictly prohibited." |
 | `site_export` | allowed | The service exists in part "to allow you to download the DNA Results". Match-list export isn't covered by this verdict. |
 | `write_labels` | not-allowed | "Running macros or scripts to automate activities on the Website … is strictly prohibited." |

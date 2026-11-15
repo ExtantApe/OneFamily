@@ -49,8 +49,16 @@ describe('importing a planted family', () => {
 })
 
 describe('the terms register is checked first (principle 8)', () => {
-  it('refuses real Ancestry match data while its terms are unclear', async () => {
-    await expect(run(exported.files, { source: 'ancestry' })).rejects.toBeInstanceOf(CapabilityRefused)
+  it('accepts a match list the user exported from Ancestry themselves (owner, N101 B)', async () => {
+    const r = await run(exported.files, { source: 'ancestry' })
+    expect(r.observations.length).toBe(exported.matches.length)
+  })
+  it('refuses the same file when the register does not allow importing own exports', async () => {
+    const text = (v: string) => `---\nsite: ancestry\nname: Ancestry\nread: 2026-11-10\nsources:\n  - https://example.com\ncapabilities:\n  read_own_matches: allowed\n  import_own_export: ${v}\n  automate_page_visits: not-allowed\n  site_export: allowed\n  write_labels: not-allowed\n  official_api: unclear\n  raw_upload: unclear\n---\n`
+    for (const v of ['unclear', 'not-allowed', 'n/a']) {
+      const reg = registerFromFiles({ 'ancestry.md': text(v) })
+      await expect(run(exported.files, { source: 'ancestry', terms: reg })).rejects.toBeInstanceOf(CapabilityRefused)
+    }
   })
   it('refuses a service the register has never heard of', async () => {
     const empty = registerFromFiles({})
