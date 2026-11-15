@@ -60,13 +60,16 @@ export function TheoryScreen({ theory, onTheory, dark }: { theory: TheoryResult 
 function OpenTheory({ theory, dark }: { theory: Extract<TheoryResult, { blind: false }>; dark: boolean }) {
   const { show } = useNames()
   const label = (id: string) => show(theory.theory.individuals.find((i) => i.id === id)?.label ?? id)
+  const [drawn, setDrawn] = useState<'candidates' | 'recorded'>('candidates')
   const focal = theory.recorded.individuals.find((i) => !theory.recorded.individuals.some((j) => j.parentage?.parents.some((p) => p.individual === i.id)))?.id
   const view = useMemo(() => {
     if (!focal) return null
-    const doc = normalizePedigree(relabel(theory.recorded, show))
-    const projection = projectPedigree(doc, { focalId: focal, view: 'pedigree', ancestorDepth: 4 })
+    // With candidates: the theory document, each candidate father drawn as his own branch (OnePedigree's `branches`).
+    const source = drawn === 'candidates' ? theory.theory : theory.recorded
+    const doc = normalizePedigree(relabel(source, show))
+    const projection = projectPedigree(doc, { focalId: focal, view: 'pedigree', ancestorDepth: 4, uncertainParents: 'branches' })
     return { projection, layout: layoutSync(projection) }
-  }, [theory.recorded, focal, show])
+  }, [theory.recorded, theory.theory, focal, show, drawn])
   const slot = theory.theory.individuals.find((i) => i.id === theory.question.child)?.parentage?.uncertainParents?.[0]
 
   return (
@@ -88,15 +91,23 @@ function OpenTheory({ theory, dark }: { theory: Extract<TheoryResult, { blind: f
             </li>
           ))}
         </ul>
-        <p className="ol-hint">
-          The chart shows the tree as recorded. Drawing both candidate fathers in the chart needs a newer OnePedigree release than this version uses.
-        </p>
+        <fieldset className="ol-row" style={{ border: 0, padding: 0, margin: 0 }}>
+          <legend className="ol-hint">The chart shows</legend>
+          <label>
+            <input type="radio" name="theory-drawn" value="candidates" checked={drawn === 'candidates'} onChange={() => setDrawn('candidates')} /> both
+            candidate fathers, side by side
+          </label>
+          <label>
+            <input type="radio" name="theory-drawn" value="recorded" checked={drawn === 'recorded'} onChange={() => setDrawn('recorded')} /> the tree as
+            recorded
+          </label>
+        </fieldset>
       </section>
       {view ? (
         <PedigreeExplorer
           projection={view.projection}
           layout={view.layout}
-          title={`Recorded family tree of ${show(theory.name)}`}
+          title={drawn === 'candidates' ? `Family tree of ${show(theory.name)}, with both candidate fathers` : `Recorded family tree of ${show(theory.name)}`}
           theme={dark ? 'midnight' : 'classic'}
           height="32rem"
         />

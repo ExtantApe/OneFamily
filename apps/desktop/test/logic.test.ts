@@ -138,6 +138,18 @@ describe('OnePedigree documents for the theory page', () => {
     expect(() => withCandidateFathers(doc, { child: 'mf', recordedFather: 'ggf', biologicalFather: 'other' }, people, { recorded: 0.7, other: 0.5 })).toThrow(/at most 1/)
   })
 
+  it('draws both candidate fathers as their own branches, each marked uncertain with its chance (K337)', () => {
+    const doc = recordedTree(people, 'me', 3)
+    const t = normalizePedigree(withCandidateFathers(doc, { child: 'mf', recordedFather: 'ggf', biologicalFather: 'other' }, people))
+    expect(validatePedigree(t).valid).toBe(true)
+    const proj = projectPedigree(t, { focalId: 'me', view: 'pedigree', ancestorDepth: 4, uncertainParents: 'branches' })
+    const drawn = new Set(proj.occurrences.map((o) => o.individualId))
+    expect(drawn.has('ggf')).toBe(true)
+    expect(drawn.has('other')).toBe(true)
+    const uncertain = proj.edges.filter((e) => (e as { uncertain?: boolean }).uncertain)
+    expect(uncertain.length).toBeGreaterThanOrEqual(2)
+  })
+
   it('relabels for the privacy switch without touching IDs or structure', () => {
     const s = createStandIns('x')
     const doc = relabel(recordedTree(people, 'me', 1), s.name)
