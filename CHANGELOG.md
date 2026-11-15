@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Genetic map download, 2026-11-15 (K653, owner's N124 A). A Genetic map card on the Kits screen offers the HapMap-derived GRCh37 map (about 24 MB) from the Beagle site at the University of Washington. It says where the map comes from and that no license is stated, downloads only after a yes, checks the pinned size and SHA-256, and can remove the map again. Comparisons use it when both raw files are on GRCh37; the demo always uses the approximate rule. Tested with made-up archives, and once by hand with the real archive (chromosome 1 comes out at 286 cM). The card hasn't been clicked in the built app.
+
 - The cross-kit check (S7) is enforced, 2026-11-15 (K655). Phasing a kit with a parent now stops unless the two share parent-child cM, and rebuilding someone also needs the children to share full-sibling cM. `fittingRelationships` and `RELATIONSHIP_WORDS` say which relationships a cM fits, and the Kits screen lists them for each pair compared on the Mac. Tested on simulated kits; the screen text hasn't been seen in the built app.
 
 - The app carries its own Node, 2026-11-15 (K338). `pnpm fetch:node` downloads Node v26.13.0 from nodejs.org, checks the pinned SHA-256 and puts it where Tauri bundles it, so the Mac app no longer needs Node installed. A release build never falls back to another Node on the Mac. Also fixed two faults in the packaged helper that kept a built app from opening a library: its shared code was split into chunk files the app didn't include, and the build dropped the `node:` prefix from `node:sqlite`. Checked by building the app and running its helper with no PATH; the app window wasn't clicked through.

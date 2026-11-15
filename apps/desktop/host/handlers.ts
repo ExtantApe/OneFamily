@@ -17,6 +17,7 @@ import {
 import type { PedigreeDocument } from '@extantape/onepedigree-core'
 import { withCandidateFathers, type TreePerson } from '../src/pedigree'
 import { createDemoLibrary, DEMO_NOTE } from './demo'
+import { downloadArchive, installMap, loadMap, mapStatus, removeMap } from './genetic-map'
 import { createExtensionBridge, type ExtensionData } from './extension/bridge'
 import { extensionRegister } from './extension/terms'
 import { PUBLISHED_EXTENSION_ID } from './extension/wire'
@@ -53,6 +54,9 @@ export function createHost(opts: {
   now?: () => Date
   /** The real services' terms files (name → text) for the extension's register. Without them every real service is refused. */
   termsFiles?: Readonly<Record<string, string>>
+  /** Where the genetic map comes from. Tests pass a made-up archive and its own size and checksum. */
+  downloadMap?: () => Promise<Uint8Array>
+  mapExpected?: { bytes: number; sha256: string }
 }) {
   const keys = opts.keys ?? noKeyStore
   const now = opts.now ?? (() => new Date())
@@ -64,6 +68,17 @@ export function createHost(opts: {
     const s = state()
     if (!s.current) throw new HostError('Choose a library folder first.')
     return s.current
+  }
+
+  /**
+   * The map for comparing two kits: the downloaded GRCh37 map when it's installed and both raw files are on
+   * GRCh37, otherwise the approximate rule. Ancestry and FamilyTreeDNA files don't state a build; both are
+   * GRCh37. The demo's positions are made up, so it always uses the approximate rule.
+   */
+  const mapFor = (lib: string, ...kits: LoadedKit[]) => {
+    if (existsSync(join(lib, DEMO_NOTE))) return ONE_CM_PER_MB
+    const on37 = (k: LoadedKit) => k.raw?.details.build === '37' || (k.raw?.details.build == null && ['ancestry', 'ftdna'].includes(k.raw?.details.service ?? ''))
+    return (kits.every(on37) && loadMap(opts.stateDir)) || ONE_CM_PER_MB
   }
 
   // --- Library and decisions
@@ -429,6 +444,29 @@ export function createHost(opts: {
       return status()
     },
 
+    // --- Genetic map (N124 A, K653)
+
+    async geneticMap() {
+      return mapStatus(opts.stateDir)
+    },
+
+    /** Downloads the GRCh37 map from its publisher. Only after a yes: `confirm` must be true. */
+    async downloadGeneticMap({ confirm }) {
+      if (confirm !== true) throw new HostError('Downloading the genetic map needs a yes first.')
+      const archive = await (opts.downloadMap ?? downloadArchive)()
+      try {
+        installMap(opts.stateDir, archive, now().toISOString().slice(0, 10), opts.mapExpected)
+      } catch (e) {
+        throw new HostError((e as Error).message)
+      }
+      return mapStatus(opts.stateDir)
+    },
+
+    async removeGeneticMap() {
+      removeMap(opts.stateDir)
+      return mapStatus(opts.stateDir)
+    },
+
     // --- Screens
 
     async kits(): Promise<KitsResult> {
@@ -454,7 +492,7 @@ export function createHost(opts: {
           const a = data.kits[i]!
           const b = data.kits[j]!
           if (!a.raw || !b.raw) continue
-          const c = compareKits(a.raw.calls, b.raw.calls, { map: ONE_CM_PER_MB, errorTolerance: 50 })
+          const c = compareKits(a.raw.calls, b.raw.calls, { map: mapFor(lib, a, b), errorTolerance: 50 })
           comparisons.push({ a: a.result.kit, b: b.result.kit, totalCm: Math.round(c.totalCm), segments: c.segments.length, longestCm: Math.round(c.longestCm), map: c.map, fits: fittingRelationships(c.totalCm).map((r) => RELATIONSHIP_WORDS[r]) })
         }
       return { kits, comparisons }
@@ -487,18 +525,20 @@ export function createHost(opts: {
     },
 
     async segments({ a, b }) {
-      const data = await load(current())
+      const lib = current()
+      const data = await load(lib)
       const ka = data.kits.find((k) => k.result.kit === a)
       const kb = data.kits.find((k) => k.result.kit === b)
       if (!ka || !kb) throw new HostError('That kit isn’t in this library.')
       if (!ka.raw || !kb.raw) throw new HostError('Both kits need a raw DNA file to be compared.')
-      const c = compareKits(ka.raw.calls, kb.raw.calls, { map: ONE_CM_PER_MB, errorTolerance: 50 })
+      const map = mapFor(lib, ka, kb)
+      const c = compareKits(ka.raw.calls, kb.raw.calls, { map, errorTolerance: 50 })
       const chromosomes = [...ka.raw.calls.keys()].filter((chr) => /^\d+$/.test(chr) && kb.raw!.calls.has(chr)).map((chr) => {
         const pos = ka.raw!.calls.get(chr)!.position
         return {
           chromosome: chr,
-          startCm: ONE_CM_PER_MB.toCm(chr, Number(pos[0] ?? 0)),
-          endCm: ONE_CM_PER_MB.toCm(chr, Number(pos[pos.length - 1] ?? 0)),
+          startCm: map.toCm(chr, Number(pos[0] ?? 0)),
+          endCm: map.toCm(chr, Number(pos[pos.length - 1] ?? 0)),
           segments: c.segments.filter((s) => s.chromosome === chr).map((s) => ({ startCm: s.startCm, endCm: s.endCm, cm: s.cm, markers: s.markers })),
         }
       })
