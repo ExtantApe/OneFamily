@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- **Cards have a hairline edge and no shadow** (D231), for a flatter, calmer look. The drag ghost and dialogs, which float above the page, keep theirs.
 
 - Five-tool OneOrigin palette, 2026-11-15 (D206, K656). The brand copy is relocked at OnePhylogeny 37453b0, which adds OneFamily as the fifth tool color and keeps every text color at 4.5:1 or better on white. Tested: the OneOrigin check and the full test suite. Not tested: the app screens by eye.
 

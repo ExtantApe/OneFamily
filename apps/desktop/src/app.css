@@ -81,7 +81,7 @@ label { display: grid; gap: 4px; }
 .ol-banner { border: 1px solid var(--of-border); border-left: 4px solid var(--of-mauve); background: var(--of-panel); border-radius: 10px; padding: 8px 12px; margin-bottom: 16px; }
 
 /* Cards and panels: radius 10 and a soft shadow. */
-.ol-card { background: var(--of-panel); border: 1px solid var(--of-border); border-radius: 10px; box-shadow: var(--of-shadow); padding: 14px 16px; margin-bottom: 14px; }
+.ol-card { background: var(--of-panel); border: 1px solid var(--of-border); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
 .ol-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
 .ol-hint { color: var(--of-muted); font-size: 13px; }
 .ol-facts { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 0; }
