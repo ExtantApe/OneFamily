@@ -132,7 +132,7 @@ describe('OnePedigree documents for the theory page', () => {
     const t = withCandidateFathers(doc, { child: 'mf', recordedFather: 'ggf', biologicalFather: 'other' }, people)
     const mf = t.individuals.find((i) => i.id === 'mf')!
     expect(mf.parentage?.parents).toEqual([])
-    expect(mf.parentage?.uncertainParents).toEqual([{ role: 'father', candidates: [{ individual: 'ggf', probability: 0.5 }, { individual: 'other', probability: 0.5 }] }])
+    expect(mf.parentage?.uncertainParents).toEqual([{ role: 'father', candidates: [{ individual: 'ggf', probability: 0.5 }, { individual: 'other', probability: 0.5 }], basis: 'planted in the demo family; odds not computed yet' }])
     expect(t.individuals.map((i) => i.id)).toEqual(expect.arrayContaining(['other', 'og', 'ggf']))
     expect(() => withCandidateFathers(doc, { child: 'mf', recordedFather: 'dad', biologicalFather: 'other' }, people)).toThrow(/isn't recorded as a parent/)
     expect(() => withCandidateFathers(doc, { child: 'mf', recordedFather: 'ggf', biologicalFather: 'other' }, people, { recorded: 0.7, other: 0.5 })).toThrow(/at most 1/)
@@ -148,6 +148,20 @@ describe('OnePedigree documents for the theory page', () => {
     expect(drawn.has('other')).toBe(true)
     const uncertain = proj.edges.filter((e) => (e as { uncertain?: boolean }).uncertain)
     expect(uncertain.length).toBeGreaterThanOrEqual(2)
+  })
+
+  it('keeps a recorded parent kind, so an adoptive parent never counts in genetics (K678)', () => {
+    const kinded = people.map((x) => (x.id === 'dad' ? { ...x, fatherKind: 'adoptive' as const } : x.id === 'mum' ? { ...x, motherKind: 'biological' as const } : x))
+    const doc = recordedTree(kinded, 'me', 3)
+    expect(doc.individuals.find((i) => i.id === 'dad')?.parentage?.parents).toEqual([{ individual: 'gf', role: 'father', kind: 'adoptive' }, { individual: 'gm', role: 'mother' }])
+    expect(doc.individuals.find((i) => i.id === 'mum')?.parentage?.parents.every((l) => !('kind' in l))).toBe(true)
+    expect(validatePedigree(normalizePedigree(doc)).valid).toBe(true)
+    // Biological links draw the genetic tree: the adoptive grandfather is left out of it.
+    const bio = projectPedigree(normalizePedigree(doc), { focalId: 'me', view: 'pedigree', ancestorDepth: 3, parentLinks: 'biological' })
+    expect(bio.occurrences.some((o) => o.individualId === 'gf')).toBe(false)
+    // The theory copy keeps the kind on every untouched link.
+    const t = withCandidateFathers(doc, { child: 'mf', recordedFather: 'ggf', biologicalFather: 'other' }, kinded)
+    expect(t.individuals.find((i) => i.id === 'dad')?.parentage?.parents[0]).toEqual({ individual: 'gf', role: 'father', kind: 'adoptive' })
   })
 
   it('relabels for the privacy switch without touching IDs or structure', () => {

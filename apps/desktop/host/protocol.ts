@@ -106,15 +106,17 @@ export type TheoryResult =
       theory: TheoryDocument
     }
 
-/** OnePedigree's uncertain parent slot, as in OnePedigree 0.1.0-alpha.21. Written here until that release is on npm. */
-export type UncertainParentSlot = { role: string | null; candidates: { individual: string; probability: number }[] }
+/** OnePedigree's uncertain parent slot (0.1.0-alpha.22): the candidates, and a few words on where they came from. */
+export type UncertainParentSlot = { role: string | null; candidates: { individual: string; probability: number }[]; basis?: string }
+/** A parent link's kind (OnePedigree 0.1.0-alpha.22). None means biological; only biological and donor links count for genetics. */
+export type ParentKind = 'biological' | 'donor' | 'surrogate' | 'legal' | 'adoptive' | 'social' | (string & {})
 export type TheoryDocument = {
   schemaVersion: 1
   individuals: {
     id: string
     label: string | null
     sex: string | null
-    parentage: { parents: { individual: string; role: string | null }[]; uncertainParents?: UncertainParentSlot[] } | null
+    parentage: { parents: { individual: string; role: string | null; kind?: ParentKind }[]; uncertainParents?: UncertainParentSlot[] } | null
     data?: Record<string, unknown>
   }[]
 }

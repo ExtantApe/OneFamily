@@ -3,7 +3,7 @@
  * tree) and the window use it, and tests can check it.
  */
 import type { PedigreeDocument } from '@extantape/onepedigree-core'
-import type { TheoryDocument } from '../host/protocol'
+import type { ParentKind, TheoryDocument } from '../host/protocol'
 
 export type TreePerson = {
   id: string
@@ -15,7 +15,13 @@ export type TreePerson = {
   /** Parents as recorded. */
   father: string | null
   mother: string | null
+  /** How each parent is recorded, when it isn't biological (adoptive, legal, social and so on). Kept on the link, so an
+   * adoptive parent never counts in genetics. */
+  fatherKind?: ParentKind
+  motherKind?: ParentKind
 }
+
+const link = (individual: string, role: 'father' | 'mother', kind: ParentKind | undefined) => ({ individual, role, ...(kind && kind !== 'biological' ? { kind } : {}) })
 
 const sexWord = (s: 'M' | 'F') => (s === 'M' ? 'male' : 'female')
 
@@ -39,8 +45,8 @@ export function recordedTree(people: readonly TreePerson[], focal: string, gener
   const individuals = [...keep.keys()].map((id) => {
     const p = byId.get(id) as TreePerson
     const parents = [
-      ...(p.father && keep.has(p.father) ? [{ individual: p.father, role: 'father' }] : []),
-      ...(p.mother && keep.has(p.mother) ? [{ individual: p.mother, role: 'mother' }] : []),
+      ...(p.father && keep.has(p.father) ? [link(p.father, 'father', p.fatherKind)] : []),
+      ...(p.mother && keep.has(p.mother) ? [link(p.mother, 'mother', p.motherKind)] : []),
     ]
     return {
       id: p.id,
@@ -56,13 +62,15 @@ export function recordedTree(people: readonly TreePerson[], focal: string, gener
 /**
  * The recorded tree with one father replaced by candidates, in OnePedigree's `uncertainParents` shape.
  * The recorded father stays in the document as a candidate, and the other man (with his parents, if given)
- * is added. The odds are placeholders until the analysis that computes them exists; they sum to 1.
+ * is added. The odds are placeholders until the analysis that computes them exists; they sum to 1. `basis` says where the
+ * candidates came from, and OnePedigree shows it after them.
  */
 export function withCandidateFathers(
   recorded: PedigreeDocument,
   q: { child: string; recordedFather: string; biologicalFather: string },
   extra: readonly TreePerson[],
   odds: { recorded: number; other: number } = { recorded: 0.5, other: 0.5 },
+  basis = 'planted in the demo family; odds not computed yet',
 ): TheoryDocument {
   if (odds.recorded <= 0 || odds.other <= 0 || odds.recorded + odds.other > 1 + 1e-9) throw new Error('each candidate needs odds above 0, and together at most 1')
   if (q.recordedFather === q.biologicalFather) throw new Error('the two candidates must be different people')
@@ -78,7 +86,7 @@ export function withCandidateFathers(
       id: i.id,
       label: i.label ?? null,
       sex: i.sex ?? null,
-      parentage: i.parentage ? { parents: i.parentage.parents.map((p) => ({ individual: p.individual, role: p.role ?? null })) } : null,
+      parentage: i.parentage ? { parents: i.parentage.parents.map((p) => ({ individual: p.individual, role: p.role ?? null, ...(p.kind ? { kind: p.kind } : {}) })) } : null,
       ...(i.data ? { data: { ...i.data } } : {}),
     }
     if (i.id !== q.child) return base
@@ -94,6 +102,7 @@ export function withCandidateFathers(
               { individual: q.recordedFather, probability: odds.recorded },
               { individual: q.biologicalFather, probability: odds.other },
             ],
+            basis,
           },
         ],
       },
