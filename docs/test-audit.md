@@ -2,6 +2,12 @@
 
 Kept by this repo's owning session (Genealogy), per `~/Code/CLAUDE.md`, "Test self-audits". Newest first.
 
+## 2026-11-23: 14-day audit, after the Theory documents (K678) and the contrast fixes
+- Promises since 2026-11-10: the cross-kit check refuses mixed kits in phasing and rebuilding (S7); the stability report between runs (S8); the GRCh37 genetic map only after a yes, checked against a pinned size and checksum; both candidate fathers as branches on the Theory chart; recorded parent kinds kept so an adoptive link never counts in genetics, and a basis on the candidate slot (K678); privacy masking of names, years and places; Node shipped inside the app.
+- Covered: cross-kit by packages/core/test/sanity.test.ts and packages/connectors/test/raw-extras.test.ts; stability by packages/analysis/test/stability.test.ts; the map by apps/desktop/test/genetic-map.test.ts ("refuses without confirm", "refuses a download with the wrong size or checksum … and writes nothing"); branches, kinds and basis by apps/desktop/test/logic.test.ts; masking by logic.test.ts, host.test.ts and extension.test.ts. 73 app tests and every package suite pass.
+- Gaps added: parent kinds and basis (logic.test.ts, "keeps a recorded parent kind…", added with K678).
+- Gaps skipped (and why): apps/desktop/scripts/fetch-node.mjs has no test. It runs at build time only, checks the download against a pinned checksum, and the built app's own Node was run by hand (e5c93b6). The control outline, focus ring, Reduce motion and hairline cards are styling: contrast was measured, and there's nothing to assert in a unit test. Nobody has looked at them on screen.
+
 ## 2026-11-10: first full audit (253 tests)
 
 **Promises checked:** the safeguards S1–S12 (ADR 0003), the terms register (ADR 0004), the library and backups (ADR 0005), the extension's security model (ADR 0009), the use policy, and privacy mode.
