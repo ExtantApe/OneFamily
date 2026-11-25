@@ -29,7 +29,7 @@ Missing: the program's own public documentation. Searches on 2026-11-25 found no
 **Recovery button: done. Keychain tie: not done, needs a decision.**
 - The host side already existed (`backupKeyRecovery`, `keychainStore.recoveryCopy`, tests in `keychain.test.ts` and `host.test.ts`).
 - New: a Backup key section on the Backups screen, shown when a destination is cloud-synced. It fetches the copy only when asked, shows it on screen, and hides it again. It never goes to the library, a log or the clipboard. Tested: `needsKeyRecovery`, and the host refusing a copy with no key store. Not tested: the button on screen, and the real Keychain.
-- Not done: the item is made through Apple's `security` tool, so its access list trusts that tool and not the app (stated in `keychain.ts`). Tying it to the signed app means the app's own signed code, not the `security` tool, has to read and write the item, and it depends on which certificate signs the app. See the owner questions.
+- Not done: the item is made through Apple's `security` tool, so its access list trusts that tool and not the app (stated in `keychain.ts`). Tying it to the signed app means the app's own signed code, not the `security` tool, has to read and write the item, and it depends on which certificate signs the app. It uses the shared certificate (owner, 2026-11-25).
 
 ## K410: the by-hand test
 
@@ -41,13 +41,12 @@ Missing: the program's own public documentation. Searches on 2026-11-25 found no
 - `docs/release-checklist.md`, with the state of everything a release needs.
 - README gains an Install section with both ways past Gatekeeper.
 - Leak audit, 2026-11-25: `scripts/leak-check.sh` passed (246 files, with the private-terms file on this Mac). Every commit author and committer is the noreply address or GitHub's. No `.env`, key or certificate files are tracked. No secrets pattern found. The only absolute home paths are made-up example paths in a library test. The only tracked binaries are app icons. `scripts/leak-check-local.sh` wasn't run, because it reads the owner's private Genealogy folder, which this session doesn't open; the owner runs it on release day.
-- Missing: the release workflow for `desktop-v*` tags, the version bump from 0.0.0, the signing choice and the app icon.
+- Missing: the release workflow for `desktop-v*` tags, the version bump from 0.0.0, and the app icon (signing: the shared certificate, 2026-11-25).
 
 ## Owner questions
 
-1. **Which public page documents the export program's files?** Recommended: the owner sends the URL (or confirms the export folder alone is the only source), so K132 can be finished without guessing.
-2. **Sign OneFamily with the same self-signed certificate as Theseus and Ariadne?** Recommended: yes. It lets the Keychain item survive updates, and users grant permissions once.
-3. **Tie the Keychain item to the app (K370)?** Recommended: do it with the signing work, with the Tauri side calling the Security framework directly, and keep the `security` tool path until then. Doing it earlier would cut users off from their own backup key.
-4. **Who writes the release workflow, and when?** Recommended: the next session, once question 2 is answered.
-5. **Relock the brand copy to the current OnePhylogeny commit?** Recommended: yes, as a separate small PR, after reading what changed in `tokens.json`.
-6. **Run `scripts/leak-check-local.sh` yourself before release.** Recommended: yes, and say if it finds anything.
+Answered 2026-11-25: the same certificate as Theseus and Ariadne, and K132 kept as written with no exporter until a partnership (docs/decisions.md). The brand relock is done (944e204). Still open:
+
+1. **Run `scripts/leak-check-local.sh` yourself before release.** Recommended: yes, and say if it finds anything.
+
+Next for the Software session: the release workflow (K152) and tying the Keychain item to the signed app (K370), together, since both rest on the certificate.

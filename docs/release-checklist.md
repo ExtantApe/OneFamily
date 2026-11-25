@@ -4,9 +4,9 @@ Nothing has been released. This is the list to work through for the first releas
 
 ## State on 2026-11-25
 
-- **No release workflow exists.** `.github/workflows/` has the CI and leak-check workflows only. A `desktop-v*` tag workflow that builds the `.dmg` and attaches it to a GitHub Release still has to be written, and it needs the signing choice below.
+- **No release workflow exists.** `.github/workflows/` has the CI and leak-check workflows only. A `desktop-v*` tag workflow that builds the `.dmg` and attaches it to a GitHub Release still has to be written, and it uses the shared certificate below.
 - **Version files** are all `0.0.0`: `apps/desktop/package.json`, `apps/desktop/src-tauri/Cargo.toml` and `apps/desktop/src-tauri/tauri.conf.json`.
-- **Signing.** Not notarized, by decision. Theseus and Ariadne share one self-signed certificate that must not change. Whether OneFamily uses the same one is an owner question. It matters for the Keychain item (K370): an item tied to the signed app only keeps working across updates if the signature stays stable.
+- **Signing.** Not notarized, by decision. Theseus and Ariadne share one self-signed certificate that must not change. OneFamily uses the same one (owner, 2026-11-25). It matters for the Keychain item (K370): an item tied to the signed app only keeps working across updates if the signature stays stable.
 - **App icon.** `src-tauri/icons/` holds an icon from before the rename. OneFamily's icon isn't decided (docs/decisions.md, 2026-11-12). The toolbar uses the brand mark.
 - **Brand copy.** `brand/oneorigin/` matches its lock, but the source in OnePhylogeny has moved ahead (`tokens.json`). Relock before release.
 
