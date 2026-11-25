@@ -2,6 +2,11 @@
 
 Kept by this repo's owning session (Genealogy), per `~/Code/CLAUDE.md`, "Test self-audits". Newest first.
 
+## 2026-11-25: S3 first-release prep (K132, K136, K137, K370, K152)
+- Promises: the recovery copy is offered only when it's needed and is refused with no key store; the app's mark has one source; the first-launch choices match the use policy and never offer law enforcement; the license and the recorded policy version say draft; the export inventory matches the columns the code writes and reads.
+- Covered: `apps/desktop/test/logic.test.ts` (`needsKeyRecovery`, the mark's source), `apps/desktop/test/host.test.ts` (refusal with no key store; recovery with a fake Keychain, already there), `apps/desktop/test/use-policy.test.ts` (4 tests), `packages/connectors/test/export-coverage.test.ts` (3 tests). 293 tests pass across the workspace.
+- Gaps skipped (and why): the Backup key button and the toolbar mark have no DOM test, because the app's tests run without a DOM; they're in `docs/by-hand-test.md` sections A and C. The real Keychain access list is native-only and is in the by-hand list too. The Keychain tie to the signed app isn't built, so there's nothing to test.
+
 ## 2026-11-23: 14-day audit, after the Theory documents (K678) and the contrast fixes
 - Promises since 2026-11-10: the cross-kit check refuses mixed kits in phasing and rebuilding (S7); the stability report between runs (S8); the GRCh37 genetic map only after a yes, checked against a pinned size and checksum; both candidate fathers as branches on the Theory chart; recorded parent kinds kept so an adoptive link never counts in genetics, and a basis on the candidate slot (K678); privacy masking of names, years and places; Node shipped inside the app.
 - Covered: cross-kit by packages/core/test/sanity.test.ts and packages/connectors/test/raw-extras.test.ts; stability by packages/analysis/test/stability.test.ts; the map by apps/desktop/test/genetic-map.test.ts ("refuses without confirm", "refuses a download with the wrong size or checksum … and writes nothing"); branches, kinds and basis by apps/desktop/test/logic.test.ts; masking by logic.test.ts, host.test.ts and extension.test.ts. 73 app tests and every package suite pass.

@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- **The Backups screen can show a recovery copy of the backup key, and the toolbar carries OneFamily's mark** (K370, K137, 2026-11-25). The Backup key section appears when a backup folder is cloud-synced. It fetches the key only when you ask, shows it on screen and hides it again. The mark is read from the locked OneOrigin brand copy. The README gains an Install section with both ways past macOS's warning. New docs: export coverage, a draft license restriction, a release checklist and a by-hand test list, all unreleased drafts. Tested: the recovery logic and the host refusal with no key store, the mark's source, the use policy against the first-launch choices, and the export inventory against the code; 293 tests pass. Not tested: the new button and the mark on screen, and the real Keychain. The Keychain item is still not tied to the signed app.
 - **The Theory chart says where its candidates came from, and recorded parent kinds are kept** (OnePedigree 0.1.0-alpha.22, K678). The candidate fathers carry a basis, shown after them on the chart: planted in the demo family, odds not computed yet. A tree that records a parent as adoptive, legal, social or another kind keeps that on the link, including in the theory's copy, so it never counts in genetics. Tested: a new test for kinds and basis, and the full app suite. Not seen on screen.
 - **Cards have a hairline edge and no shadow** (D231), for a flatter, calmer look. The drag ghost and dialogs, which float above the page, keep theirs.
 
