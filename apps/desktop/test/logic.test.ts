@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { normalizePedigree, projectPedigree, validatePedigree } from '@extantape/onepedigree-core'
 import type { BackupState, MatchRow, Status } from '../host/protocol'
-import { firstLaunchStep, flowInputs, nextStepDown, stepLabel } from '../src/flow'
+import { firstLaunchStep, flowInputs, needsKeyRecovery, nextStepDown, stepLabel } from '../src/flow'
 import { cmInput, DEFAULT_SORT, filterMatches, nextSort, NO_FILTER, sortMatches } from '../src/matches'
 import { recordedTree, relabel, withCandidateFathers, type TreePerson } from '../src/pedigree'
 import { createStandIns, standInCandidate, variantKey } from '../src/standins'
@@ -60,6 +60,13 @@ describe('the first-launch flow', () => {
     expect(firstLaunchStep(flowInputs(status(lib(true)), backups(1, 1)))).toBe('ready')
     expect(firstLaunchStep(flowInputs(status(lib(true)), backups(0, 0)))).toBe('ready')
     expect(firstLaunchStep(flowInputs(status(lib(true)), null))).toBe('backups')
+  })
+
+  it('offers the backup-key recovery copy only when a destination is encrypted with it', () => {
+    expect(needsKeyRecovery(backups(2, 2))).toBe(false)
+    const b = backups(2, 2)
+    b.destinations[1]!.cloudSynced = true
+    expect(needsKeyRecovery(b)).toBe(true)
   })
 
   it('offers one step down at a time, saying what would be lost', () => {
@@ -220,5 +227,23 @@ describe('masking years and places for shares (plan 2b)', async () => {
     expect(maskPlace('Harrowfield, Somecounty, Region C')).toBe('Region C')
     expect(maskPlace('Region C')).toBe('Region C')
     expect(maskPlace('')).toBe('')
+  })
+})
+
+describe('the OneFamily mark', () => {
+  it('is read from the locked OneOrigin copy, so the app has no second copy to drift', async () => {
+    const { readFileSync, existsSync } = await import('node:fs')
+    const { fileURLToPath } = await import('node:url')
+    const root = fileURLToPath(new URL('../../../', import.meta.url))
+    const lock = JSON.parse(readFileSync(`${root}brand/oneorigin.lock`, 'utf8')) as { files: Record<string, string> }
+    for (const f of ['marks/onefamily-dark.svg', 'marks/onefamily-small.svg']) {
+      expect(lock.files[f], f).toBeTruthy()
+      expect(existsSync(`${root}brand/oneorigin/${f}`)).toBe(true)
+    }
+    const app = readFileSync(`${root}apps/desktop/src/App.tsx`, 'utf8')
+    expect(app).toMatch(/@brand\/marks\/onefamily-dark\.svg/)
+    expect(app).toMatch(/@brand\/marks\/onefamily-small\.svg/)
+    // No copy of the mark lives under the app.
+    expect(existsSync(`${root}apps/desktop/src/onefamily-small.svg`)).toBe(false)
   })
 })

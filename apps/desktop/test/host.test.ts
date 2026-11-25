@@ -96,6 +96,12 @@ describe('first launch, on the host', () => {
     expect(readdirSync(cloud)).toEqual([])
   })
 
+  it('refuses a recovery copy when no key store is in use, and says why', async () => {
+    const { root, h } = setup()
+    await h.chooseLibrary({ path: join(root, 'lib') })
+    await expect(h.backupKeyRecovery({})).rejects.toThrow(/no key store/i)
+  })
+
   it('with a key store, backs up to a cloud-synced folder encrypted, and gives a recovery copy', async () => {
     const items = new Map<string, string>()
     const fake: SecurityRunner = async (args) => {

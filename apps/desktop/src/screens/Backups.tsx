@@ -1,8 +1,8 @@
-import { CircleAlert, CircleCheck, HardDrive, TriangleAlert } from 'lucide-react'
+import { CircleAlert, CircleCheck, HardDrive, KeyRound, TriangleAlert } from 'lucide-react'
 import { useState } from 'react'
 import type { BackupRun, BackupState } from '../../host/protocol'
 import { call } from '../api'
-import { nextStepDown, requirementText } from '../flow'
+import { needsKeyRecovery, nextStepDown, requirementText } from '../flow'
 import { ErrorBox, FolderField, formatDate, Icon } from '../ui'
 
 export function Verdict({ backups }: { backups: BackupState }) {
@@ -167,6 +167,57 @@ export function BackupsScreen({ backups, onBackups }: { backups: BackupState; on
         </div>
       )}
       <BackupSetup backups={backups} onBackups={onBackups} />
+      {needsKeyRecovery(backups) && <BackupKeyCard />}
     </>
+  )
+}
+
+/**
+ * A recovery copy of the backup key. Backups in cloud-synced folders are encrypted with a key that lives only in
+ * this Mac's Keychain, so without a copy a lost Mac means unreadable backups. The copy is fetched when asked for,
+ * shown on screen only, and never written to the library, a log or the clipboard.
+ */
+function BackupKeyCard() {
+  const [copy, setCopy] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
+  return (
+    <section aria-labelledby="key-h">
+      <h2 id="key-h">Backup key</h2>
+      <p>
+        Backups in cloud-synced folders are encrypted on this Mac. The key is kept in this Mac’s Keychain. If this Mac is lost, you need a copy of the key to read
+        those backups. Write it down or print it, and keep it somewhere that isn’t this Mac.
+      </p>
+      <ErrorBox error={error} onDismiss={() => setError(null)} />
+      {copy === null ? (
+        <button
+          type="button"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true)
+            setError(null)
+            try {
+              setCopy((await call('backupKeyRecovery')).copy)
+            } catch (e) {
+              setError((e as Error).message)
+            } finally {
+              setBusy(false)
+            }
+          }}
+        >
+          <Icon of={KeyRound} /> Show a recovery copy
+        </button>
+      ) : (
+        <div className="ol-confirm" role="group" aria-label="Recovery copy of the backup key">
+          <p>
+            <code style={{ userSelect: 'all', wordBreak: 'break-word' }}>{copy}</code>
+          </p>
+          <p className="ol-hint">The last six characters are a check, so you can tell a typing mistake from a wrong key. Anyone who has this can read your encrypted backups.</p>
+          <button type="button" className="ol-primary" autoFocus onClick={() => setCopy(null)}>
+            Hide it
+          </button>
+        </div>
+      )}
+    </section>
   )
 }

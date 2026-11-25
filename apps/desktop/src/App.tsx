@@ -1,6 +1,8 @@
-import { AlignLeft, Upload, Dna, Eye, EyeOff, GitBranch, HardDrive, Network, Puzzle, Settings, Table2, Users } from 'lucide-react'
+import { AlignLeft, Upload, Eye, EyeOff, GitBranch, HardDrive, Network, Puzzle, Settings, Table2, Users } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { BackupState, ExtensionView, KitsResult, Status, TheoryResult } from '../host/protocol'
+import markDark from '@brand/marks/onefamily-dark.svg'
+import markSmall from '@brand/marks/onefamily-small.svg'
 import { call, inMacApp } from './api'
 import { firstLaunchStep, flowInputs } from './flow'
 import { BackupsScreen, Verdict } from './screens/Backups'
@@ -164,7 +166,7 @@ export function App() {
       <div className="ol-app">
         <header className="ol-toolbar">
           <span className="ol-title">
-            <Icon of={Dna} size={18} /> OneFamily
+            <img src={dark ? markDark : markSmall} alt="" width={22} height={22} /> OneFamily
           </span>
           {demo && <span className="ol-badge ol-badge-demo">Made-up demo family</span>}
           <nav className="ol-nav" aria-label="Screens">

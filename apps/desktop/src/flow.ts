@@ -64,3 +64,8 @@ export function nextStepDown(bypass: 0 | 1 | 2): { to: 1 | 2; button: string; lo
 export function requirementText(bypass: 0 | 1 | 2): string {
   return bypass === 0 ? 'Two backups are required (the default).' : bypass === 1 ? 'One backup is required. You chose this.' : 'No backups are required. You chose this.'
 }
+
+/** The recovery-copy button is offered when any destination is encrypted with the Keychain key, which is when losing this Mac would lock the backups. */
+export function needsKeyRecovery(backups: BackupState): boolean {
+  return backups.destinations.some((d) => d.cloudSynced)
+}

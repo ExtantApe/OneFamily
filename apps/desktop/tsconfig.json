@@ -7,6 +7,7 @@
     "declaration": false,
     "types": ["node", "vite/client"],
     "paths": {
+      "@brand/*": ["../../brand/oneorigin/*"],
       "@extantape/onefamily-core": ["../../packages/core/src/index.ts"],
       "@extantape/onefamily-connectors": ["../../packages/connectors/src/index.ts"],
       "@extantape/onefamily-library": ["../../packages/library/src/index.ts"],
